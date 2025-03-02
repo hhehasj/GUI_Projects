@@ -25,7 +25,7 @@ class Main(ctk.CTk):
             corner_radius=20,
         )
         self.greeting_lbl.place(
-            relx=0.5, rely=0.3, anchor="center", relwidth=0.9, relheight=0.15
+            relx=0.5, rely=0.25, anchor="center", relwidth=0.9, relheight=0.15
         )
 
         self.start_btn = ctk.CTkButton(
@@ -109,4 +109,3 @@ class Username_window(ctk.CTkToplevel):
 
 main_window = Main()
 main_window.mainloop()
-
