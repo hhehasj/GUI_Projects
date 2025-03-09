@@ -66,10 +66,10 @@ class Username_window(ctk.CTkToplevel):
             self.parent_name = self.winfo_parent()
             self.parent_window = self.nametowidget(self.parent_name)
 
-            game_window = Game_Window()
+            Game_Window(self.master)
             if self.parent_window:
-                self.parent_window.destroy()
-            game_window.start_loop()
+                self.parent_window.withdraw()
+                self.withdraw()
 
         self.geometry("300x185")
         self.title("Enter Username")
