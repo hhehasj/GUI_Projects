@@ -1,5 +1,6 @@
 import customtkinter as ctk
 from game_window import Game_Window
+from database_connection import Connect
 
 
 class Main(ctk.CTk):
@@ -80,10 +81,10 @@ class Username_window(ctk.CTkToplevel):
         )
         self.text_msg.place(relx=0.5, rely=0.2, anchor="center")
 
-        Username_variable = ctk.StringVar()
+        self.Username_variable = ctk.StringVar()
         self.username_input = ctk.CTkEntry(
             self,
-            textvariable=Username_variable,
+            textvariable=self.Username_variable,
             font=("Arial", 15),
             border_width=3,
             border_color="black",
@@ -100,7 +101,7 @@ class Username_window(ctk.CTkToplevel):
             border_color="black",
             border_spacing=2,
             corner_radius=7,
-            command=show_game_window,
+            command=lambda: [show_game_window(), Connect(self.Username_variable.get())]
         )
         self.enter_btn.place(
             relx=0.5, rely=0.72, anchor="center", relwidth=0.25, relheight=0.2

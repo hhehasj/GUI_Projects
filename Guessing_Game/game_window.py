@@ -1,9 +1,9 @@
 import customtkinter as ctk
 from PIL import Image
+from random import choice
 
 
 class Game_Window(ctk.CTkToplevel):
-
     class MechanicsContent(ctk.CTkLabel):
         def __init__(self, parent, start_position: float, end_position: float):
             super().__init__(master=parent)
@@ -13,13 +13,22 @@ class Game_Window(ctk.CTkToplevel):
             self.position = start_position
             self.in_start_position = True
 
-            self.configure(fg_color="transparent",
-                           font=("Arial", 15, "bold"),
-                           text="Enter your guess in the Empty Box. For every\nwrong guess, the guess counter increases.\nThe lower the guess counts, the better.\n😁",
-                           )
-            self.place(relx=0.225, rely=start_position, anchor="center", relwidth=0.35, relheight=0.2)
+            self.configure(
+                fg_color="transparent",
+                font=("Arial", 15, "bold"),
+                text="Enter your guess in the Empty Box. For every\nwrong guess, the guess counter increases.\nThe lower the guess counts, the better.\n😁",
+            )
+            self.place(
+                relx=0.225,
+                rely=start_position,
+                anchor="center",
+                relwidth=0.35,
+                relheight=0.2,
+            )
 
-        def animate(self, event):  # allows the frame to move up or down when dropdown_button is pressed
+        def animate(
+            self, event
+        ):  # allows the frame to move up or down when dropdown_button is pressed
             if self.in_start_position:
                 self.animate_down()
 
@@ -28,7 +37,6 @@ class Game_Window(ctk.CTkToplevel):
 
         def animate_down(self):
             if self.position < self.end_position:
-
                 self.position += 0.01
                 self.place_configure(rely=self.position)
                 self.after(15, self.animate_down)
@@ -38,7 +46,6 @@ class Game_Window(ctk.CTkToplevel):
 
         def animate_up(self):
             if self.position > self.start_position:
-
                 self.position -= 0.01
                 self.place_configure(rely=self.position)
                 self.after(15, self.animate_up)
@@ -54,39 +61,28 @@ class Game_Window(ctk.CTkToplevel):
 
         self.down_arrow = ctk.CTkImage(
             light_image=Image.open("./arrows/test_arrow_down.png"),
-            dark_image=Image.open("./arrows/test_arrow_down.png")
+            dark_image=Image.open("./arrows/test_arrow_down.png"),
         )
 
         self.up_arrow = ctk.CTkImage(
             light_image=Image.open("./arrows/test_arrow_up.png"),
-            dark_image=Image.open("./arrows/test_arrow_up.png")
+            dark_image=Image.open("./arrows/test_arrow_up.png"),
         )
 
-        # current_directory = os.path.dirname(os.path.abspath(__file__))
-        # down_arrow_path = os.path.join(current_directory, "down_arrow.png")
-        # up_arrow_path = os.path.join(current_directory, "up_arrow.png")
-        #
-        # self.down_arrow = ctk.CTkImage(
-        #     light_image=Image.open(down_arrow_path),
-        #     dark_image=Image.open(down_arrow_path)
-        # )
-        #
-        # self.up_arrow = ctk.CTkImage(
-        #     light_image=Image.open(up_arrow_path),
-        #     dark_image=Image.open(up_arrow_path)
-        # )
-
         # Frames
-        self.hidden_frame = ctk.CTkFrame(self,
-                                         fg_color="transparent",
-                                         corner_radius=1,
-                                         )
-        self.hidden_frame.place(relx=0.225, rely=0.25, anchor="center",
-                                relwidth=0.35, relheight=0.2)
+        self.hidden_frame = ctk.CTkFrame(
+            self,
+            fg_color="transparent",
+            corner_radius=1,
+        )
+        self.hidden_frame.place(
+            relx=0.225, rely=0.25, anchor="center", relwidth=0.35, relheight=0.2
+        )
 
         self.submit_frame = ctk.CTkFrame(self, fg_color="transparent")
-        self.submit_frame.place(relx=0.25, rely=0.8, anchor="center",
-                                relwidth=0.4, relheight=0.1)
+        self.submit_frame.place(
+            relx=0.25, rely=0.8, anchor="center", relwidth=0.4, relheight=0.1
+        )
 
         # WIDGETS
         self.greeting_lbl = ctk.CTkLabel(
@@ -101,38 +97,48 @@ class Game_Window(ctk.CTkToplevel):
             relx=0.5, rely=0.2, anchor="center", relwidth=0.9, relheight=0.15
         )
 
-        self.submit_btn = ctk.CTkButton(self.submit_frame,
-                                        text="Submit",
-                                        font=("Arial", 18, "bold"),
-                                        border_color="black",
-                                        border_width=3, )
-        self.submit_btn.place(relx=0.15, rely=0.5, anchor='center',
-                              relwidth=0.3, relheight=1)
+        self.submit_btn = ctk.CTkButton(
+            self.submit_frame,
+            text="Submit",
+            font=("Arial", 18, "bold"),
+            border_color="black",
+            border_width=3,
+            corner_radius=1,
+        )
+        self.submit_btn.place(
+            relx=0.15, rely=0.5, anchor="center", relwidth=0.3, relheight=1
+        )
 
         self.Guesses = ctk.IntVar()
-        self.input_field = ctk.CTkEntry(self.submit_frame,
-                                        placeholder_text="Enter your guesses here.",
-                                        textvariable=self.Guesses,
-                                        border_color="black",
-                                        border_width=3,
-                                        font=("Helvetica", 18, "bold"))
-        self.input_field.place(relx=0.65, rely=0.5, anchor="center",
-                               relwidth=0.7, relheight=1)
+        self.input_field = ctk.CTkEntry(
+            self.submit_frame,
+            textvariable=self.Guesses,
+            border_color="black",
+            border_width=3,
+            font=("Helvetica", 18, "bold"),
+            corner_radius=1,
+        )
+        self.input_field.place(
+            relx=0.65, rely=0.5, anchor="center", relwidth=0.7, relheight=1
+        )
 
-        self.content_of_mechanics_btn = self.MechanicsContent(self, start_position=0.25, end_position=0.55)
+        self.content_of_mechanics_btn = self.MechanicsContent(
+            self, start_position=0.25, end_position=0.55
+        )
 
-        self.mechanics_btn = ctk.CTkButton(master=self,
-                                           text="Mechanics of the Game",
-                                           image=self.down_arrow,
-                                           compound="right",
-                                           font=("Arial", 18, "bold"),
-                                           border_color="black",
-                                           border_width=2,
-                                           border_spacing=20,
-                                           anchor="w"
-                                           )
-        self.mechanics_btn.place(relx=0.225, rely=0.4, anchor="center",
-                                 relwidth=0.35, relheight=0.1)
+        self.mechanics_btn = ctk.CTkButton(
+            master=self,
+            text="Mechanics of the Game",
+            image=self.down_arrow,
+            compound="right",
+            font=("Arial", 18, "bold"),
+            border_color="black",
+            border_width=2,
+            border_spacing=20,
+        )
+        self.mechanics_btn.place(
+            relx=0.225, rely=0.4, anchor="center", relwidth=0.35, relheight=0.1
+        )
 
         self.mechanics_btn.bind("<Button-1>", self.content_of_mechanics_btn.animate)
         self.mechanics_btn.bind("<Button-1>", self.change_icon, add="+")
@@ -141,6 +147,11 @@ class Game_Window(ctk.CTkToplevel):
         self.greeting_lbl.lower()
         self.hidden_frame.lower()
         self.content_of_mechanics_btn.lower()
+
+        self.counter_widget = GuessCounter(self)
+        self.counter_widget.place(
+            relx=0.7, rely=0.6, anchor="center", relwidth=0.3, relheight=0.50
+        )
 
     def change_icon(self, event):
         if self.content_of_mechanics_btn.in_start_position:
@@ -152,3 +163,61 @@ class Game_Window(ctk.CTkToplevel):
 class GuessCounter(ctk.CTkFrame):
     def __init__(self, parent):
         super().__init__(master=parent)
+
+        self.configure(
+            fg_color="transparent",
+            border_width=3,
+            border_color="black",
+        )
+
+        self.guesses_lbl = ctk.CTkLabel(
+            self,
+            text="GUESSES:",
+            font=("Arial", 20, "bold"),
+            # fg_color="red"
+        )
+        self.guesses_lbl.place(
+            relx=0.5, rely=0.02, anchor="n", relwidth=0.5, relheight=0.1
+        )
+
+        self.counter = ctk.CTkLabel(
+            self,
+            text="1",
+            font=("Arial", 45, "bold"),
+            # fg_color="red"
+        )
+        self.counter.place(
+            relx=0.5, rely=0.25, anchor="center", relwidth=0.2, relheight=0.25
+        )
+
+        self.tries_lbl = ctk.CTkLabel(
+            self,
+            text="It took you:",
+            font=("Arial", 25, "bold"),
+        )
+
+        self.tries_lbl.place(
+            relx=0.345,
+            rely=0.6,
+            anchor="center",
+            relwidth=0.48,
+            relheight=0.2,
+        )
+
+        self.tries_num = ctk.CTkLabel(
+            self,
+            text=f"5 tries",
+            font=("Arial", 25, "bold"),
+        )
+        self.tries_num.place(
+            relx=0.755, rely=0.6, anchor="center", relwidth=0.35, relheight=0.2
+        )
+
+        self.tries_lbl = ctk.CTkLabel(
+            self,
+            text="() was the answer",
+            font=("Arial", 25, "bold"),
+        )
+        self.tries_lbl.place(
+            relx=0.5, rely=0.8, anchor="center", relwidth=0.8, relheight=0.2
+        )
