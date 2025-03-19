@@ -1,6 +1,6 @@
 import customtkinter as ctk
 from game_window import Game_Window
-from database_connection import Connect
+from database_connection import Add_Username
 
 
 class Main(ctk.CTk):
@@ -101,7 +101,7 @@ class Username_window(ctk.CTkToplevel):
             border_color="black",
             border_spacing=2,
             corner_radius=7,
-            command=lambda: [show_game_window(), Connect(self.Username_variable.get())]
+            command=lambda: [show_game_window(), Add_Username(self.Username_variable.get())]
         )
         self.enter_btn.place(
             relx=0.5, rely=0.72, anchor="center", relwidth=0.25, relheight=0.2

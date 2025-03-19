@@ -1,6 +1,9 @@
 import customtkinter as ctk
 from PIL import Image
 from random import choice
+from string import digits
+from tkinter.messagebox import showerror
+from database_connection import Update_Guesses
 
 
 class Game_Window(ctk.CTkToplevel):
@@ -59,6 +62,9 @@ class Game_Window(ctk.CTkToplevel):
         self.title("Game On")
         self.geometry("920x550")
 
+        self.answer_number: str = choice(digits)
+        self.number_of_wrong_guesses: int = 0
+
         self.down_arrow = ctk.CTkImage(
             light_image=Image.open("./arrows/test_arrow_down.png"),
             dark_image=Image.open("./arrows/test_arrow_down.png"),
@@ -104,12 +110,13 @@ class Game_Window(ctk.CTkToplevel):
             border_color="black",
             border_width=3,
             corner_radius=1,
+            command=self.answer_checker
         )
         self.submit_btn.place(
             relx=0.15, rely=0.5, anchor="center", relwidth=0.3, relheight=1
         )
 
-        self.Guesses = ctk.IntVar()
+        self.Guesses = ctk.StringVar()
         self.input_field = ctk.CTkEntry(
             self.submit_frame,
             textvariable=self.Guesses,
@@ -148,16 +155,47 @@ class Game_Window(ctk.CTkToplevel):
         self.hidden_frame.lower()
         self.content_of_mechanics_btn.lower()
 
-        self.counter_widget = GuessCounter(self)
-        self.counter_widget.place(
+        self.Counter_Widget = GuessCounter(self)
+        self.Counter_Widget.place(
             relx=0.7, rely=0.6, anchor="center", relwidth=0.3, relheight=0.50
         )
+        self.Counter_Widget.tries_num_lbl.lower()
+        self.Counter_Widget.tries_lbl.lower()
+        self.Counter_Widget.correct_answer_lbl.lower()
 
     def change_icon(self, event):
         if self.content_of_mechanics_btn.in_start_position:
             self.mechanics_btn.configure(image=self.up_arrow)
         else:
             self.mechanics_btn.configure(image=self.down_arrow)
+
+    def answer_checker(self):
+        users_answer = self.Guesses.get()
+        print(list(users_answer), self.answer_number)
+
+        try:
+            if int(users_answer) < 0 or int(users_answer) > 9:
+                showerror("Number out of bounds", message="It is only 0 to 9.")
+
+            if users_answer != self.answer_number:
+                self.number_of_wrong_guesses += 1
+
+            else:
+                self.number_of_wrong_guesses += 1  # This only increments by 1 once. To get the actuall # of guesses.
+
+                self.Counter_Widget.tries_num_lbl.configure(text=f'{self.number_of_wrong_guesses} tries')
+                self.Counter_Widget.correct_answer_lbl.configure(text=f'({self.answer_number}) was the answer')
+                Update_Guesses(final_num_guesses=self.number_of_wrong_guesses)
+
+                self.Counter_Widget.tries_num_lbl.lift()
+                self.Counter_Widget.tries_lbl.lift()
+                self.Counter_Widget.correct_answer_lbl.lift()
+
+            self.Counter_Widget.counter.configure(text=f"{self.number_of_wrong_guesses}")
+
+        except ValueError:
+            self.input_field.delete(0, "end")
+            showerror("Invalid input", message="Only put digits!")
 
 
 class GuessCounter(ctk.CTkFrame):
@@ -174,7 +212,6 @@ class GuessCounter(ctk.CTkFrame):
             self,
             text="GUESSES:",
             font=("Arial", 20, "bold"),
-            # fg_color="red"
         )
         self.guesses_lbl.place(
             relx=0.5, rely=0.02, anchor="n", relwidth=0.5, relheight=0.1
@@ -182,9 +219,8 @@ class GuessCounter(ctk.CTkFrame):
 
         self.counter = ctk.CTkLabel(
             self,
-            text="1",
+            text="0",
             font=("Arial", 45, "bold"),
-            # fg_color="red"
         )
         self.counter.place(
             relx=0.5, rely=0.25, anchor="center", relwidth=0.2, relheight=0.25
@@ -204,20 +240,20 @@ class GuessCounter(ctk.CTkFrame):
             relheight=0.2,
         )
 
-        self.tries_num = ctk.CTkLabel(
+        self.tries_num_lbl = ctk.CTkLabel(
             self,
-            text=f"5 tries",
+            text=f"0 tries",
             font=("Arial", 25, "bold"),
         )
-        self.tries_num.place(
+        self.tries_num_lbl.place(
             relx=0.755, rely=0.6, anchor="center", relwidth=0.35, relheight=0.2
         )
 
-        self.tries_lbl = ctk.CTkLabel(
+        self.correct_answer_lbl = ctk.CTkLabel(
             self,
             text="() was the answer",
             font=("Arial", 25, "bold"),
         )
-        self.tries_lbl.place(
+        self.correct_answer_lbl.place(
             relx=0.5, rely=0.8, anchor="center", relwidth=0.8, relheight=0.2
         )
