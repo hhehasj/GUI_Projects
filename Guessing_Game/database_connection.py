@@ -1,23 +1,42 @@
-import sqlite3
+import sqlite3 as sqlite
+
+USERNAME = ""
 
 
-def add_username(connection, username: tuple[str, int]):
-    sqlite_statement = '''INSERT INTO users (name, guesses)
-                          VALUES (?, ?)'''
-
-    cursor = connection.cursor()
-
-    cursor.execute(sqlite_statement, username)
-
-
-def Connect(username: str):
-
+def Add_Username(username):
+    global USERNAME
     try:
-        with sqlite3.connect("users.db") as conn:
+        with sqlite.connect("users.db") as conn:
 
-            # creates a row and puts it into the database.
-            new_row = (username, 0)
-            add_username(conn, new_row)
+            cursor = conn.cursor()
 
-    except sqlite3.OperationalError as e:
+            USERNAME = username
+            print(f"Add_Username= {USERNAME}")
+
+            new_row: tuple[str, int] = (username, 0)
+            cursor.execute("""INSERT INTO users (name, guesses)
+                                VALUES (?, ?);""", new_row)
+
+    except sqlite.OperationalError as e:
         print(e)
+
+
+def Update_Guesses(final_num_guesses):
+    global USERNAME
+    try:
+        with sqlite.connect("users.db") as conn:
+
+            cursor = conn.cursor()
+
+            print(f"Update_Guesses= {final_num_guesses, USERNAME}")
+
+            updated_row: tuple[int, str] = (final_num_guesses, USERNAME)
+            cursor.execute("""UPDATE users
+                              SET guesses = ?
+                              WHERE name LIKE ?;""", updated_row)
+
+            USERNAME = ""
+
+    except sqlite.OperationalError as e:
+        print(e)
+
