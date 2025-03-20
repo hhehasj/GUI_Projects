@@ -11,7 +11,7 @@ def Add_Username(username):
             cursor = conn.cursor()
 
             USERNAME = username
-            print(f"Add_Username= {USERNAME}")
+            print(f"Add_Username= {list(USERNAME)}")
 
             new_row: tuple[str, int] = (username, 0)
             cursor.execute("""INSERT INTO users (name, guesses)
@@ -40,3 +40,16 @@ def Update_Guesses(final_num_guesses):
     except sqlite.OperationalError as e:
         print(e)
 
+
+def Show_to_Leaderboard():
+    try:
+        with sqlite.connect("users.db") as conn:
+
+            cursor = conn.cursor()
+
+            cursor.execute("""SELECT name, created_at, guesses FROM users;""")
+            rows = cursor.fetchall()
+            return rows
+
+    except sqlite.OperationalError as e:
+        print(e)
