@@ -29,38 +29,42 @@ class Game_Window(ctk.CTkToplevel):
                 relheight=0.2,
             )
 
-        def animate(
-            self, event
-        ):  # allows the frame to move up or down when dropdown_button is pressed
+        def animate(self, event):  # allows the frame to move up or down when dropdown_button is pressed
+            def animate_down():
+                if self.position < self.end_position:
+                    self.position += 0.01
+                    self.place_configure(rely=self.position)
+                    self.after(15, animate_down)
+
+                else:
+                    self.in_start_position = False
+
+            def animate_up():
+                if self.position > self.start_position:
+                    self.position -= 0.01
+                    self.place_configure(rely=self.position)
+                    self.after(15, animate_up)
+
+                else:
+                    self.in_start_position = True
+
             if self.in_start_position:
-                self.animate_down()
+                animate_down()
 
             else:
-                self.animate_up()
-
-        def animate_down(self):
-            if self.position < self.end_position:
-                self.position += 0.01
-                self.place_configure(rely=self.position)
-                self.after(15, self.animate_down)
-
-            else:
-                self.in_start_position = False
-
-        def animate_up(self):
-            if self.position > self.start_position:
-                self.position -= 0.01
-                self.place_configure(rely=self.position)
-                self.after(15, self.animate_up)
-
-            else:
-                self.in_start_position = True
+                animate_up()
 
     def __init__(self, parent):
         super().__init__(master=parent)
 
+        self.width_of_screen = self.winfo_screenwidth()
+        self.height_of_screen = self.winfo_screenheight()
+
+        self.center_x = int(self.width_of_screen - 920) // 2
+        self.center_y = int(self.height_of_screen - 550) // 2
+
         self.title("Game On")
-        self.geometry("920x550")
+        self.geometry(f"920x550+{self.center_x}+{self.center_y}")
 
         self.answer_number: str = choice(digits)
         self.number_of_wrong_guesses: int = 0
@@ -171,7 +175,6 @@ class Game_Window(ctk.CTkToplevel):
 
     def answer_checker(self):
         users_answer = self.Guesses.get()
-        print(list(users_answer), self.answer_number)
 
         try:
             if int(users_answer) < 0 or int(users_answer) > 9:
@@ -191,11 +194,27 @@ class Game_Window(ctk.CTkToplevel):
                 self.Counter_Widget.tries_lbl.lift()
                 self.Counter_Widget.correct_answer_lbl.lift()
 
+                # Submit btn changes to the back_btn
+                self.back_btn_appear()
+
             self.Counter_Widget.counter.configure(text=f"{self.number_of_wrong_guesses}")
 
         except ValueError:
             self.input_field.delete(0, "end")
             showerror("Invalid input", message="Only put digits!")
+
+    def back_btn_appear(self):
+        self.input_field.destroy()
+        self.submit_btn.configure(text="BACK", command=self.return_to_main_window)
+        self.submit_btn.place_configure(relx=0.5, rely=0.5, anchor='center',
+                                        relwidth=1, relheight=1)
+
+    def return_to_main_window(self):
+        parent = self.winfo_parent()
+        parent_window = self.nametowidget(parent)
+
+        parent_window.deiconify()
+        self.destroy()
 
 
 class GuessCounter(ctk.CTkFrame):
