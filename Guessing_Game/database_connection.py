@@ -11,7 +11,6 @@ def Add_Username(username):
             cursor = conn.cursor()
 
             USERNAME = username
-            print(f"Add_Username= {list(USERNAME)}")
 
             new_row: tuple[str, int] = (username, 0)
             cursor.execute("""INSERT INTO users (name, guesses)
@@ -27,8 +26,6 @@ def Update_Guesses(final_num_guesses):
         with sqlite.connect("users.db") as conn:
 
             cursor = conn.cursor()
-
-            print(f"Update_Guesses= {final_num_guesses, USERNAME}")
 
             updated_row: tuple[int, str] = (final_num_guesses, USERNAME)
             cursor.execute("""UPDATE users
@@ -47,7 +44,7 @@ def Show_to_Leaderboard():
 
             cursor = conn.cursor()
 
-            cursor.execute("""SELECT name, created_at, guesses FROM users;""")
+            cursor.execute("""SELECT name, created_on, guesses FROM users;""")
             rows = cursor.fetchall()
             return rows
 

@@ -8,8 +8,15 @@ from tkinter.messagebox import showinfo
 class Main(ctk.CTk):
     def __init__(self):
         super().__init__()
+
+        self.width_of_screen = self.winfo_screenwidth()
+        self.height_of_screen = self.winfo_screenheight()
+
+        self.center_x = int(self.width_of_screen - 920) // 2
+        self.center_y = int(self.height_of_screen - 550) // 2
+
         self.title("Guessing Game")
-        self.geometry("920x550")
+        self.geometry(f"920x550+{self.center_x}+{self.center_y}")
 
         def show_username_window():
             # hasattr() prevents an AttributeError caused by .winfo_exists()
@@ -22,10 +29,37 @@ class Main(ctk.CTk):
         def show_leaderboard():
             # hasattr() prevents an AttributeError caused by .winfo_exists()
             # It checks if the object contains the attribute(prefix: self.) in "attr"
-            if hasattr(self, "leaderbord_window") and self.leaderbord_window.winfo_exists():
+            if hasattr(self, "leaderboard_window") and self.leaderboard_window.winfo_exists():
                 self.leaderboard_window.destroy()
 
             self.leaderboard_window = LeaderBoard(self.master)
+
+        def start_text_to_white(event):
+            self.start_btn.configure(text_color="white")
+            self.start_btn._fg_color = 'red'
+            self.start_btn.configure(state='disabled')
+            self.start_btn.configure(state='normal')
+
+        def start_change_text_back(event):
+            self.start_btn.configure(text_color="red")
+            self.start_btn._fg_color = 'transparent'
+            self.start_btn.configure(state='disabled')
+            self.start_btn.configure(state='normal')
+
+        def leaderboard_text_to_white(event):
+            self.leaderboard_btn.configure(text_color="white")
+            self.leaderboard_btn._fg_color = 'green'
+            self.leaderboard_btn.configure(state='disabled')
+            self.leaderboard_btn.configure(state='normal')
+
+        def leaderboard_change_text_back(event):
+            self.leaderboard_btn.configure(text_color="green")
+            self.leaderboard_btn._fg_color = 'transparent'
+            self.leaderboard_btn.configure(state='disabled')
+            self.leaderboard_btn.configure(state='normal')
+
+        def change_select_color(widget, color: str):
+            widget._hover_color = color
 
         self.greeting_lbl = ctk.CTkLabel(
             self,
@@ -43,31 +77,33 @@ class Main(ctk.CTk):
             self,
             text="GAME ON!!!",
             font=("Calibri", 25),
-            fg_color="#ebebeb",
-            text_color="red",
-            hover_color="red",
+            fg_color="transparent",
+            text_color='red',
             border_color="red",
             border_width=3,
-            command=show_username_window,
+            command=lambda: [show_username_window(), change_select_color(self.start_btn, 'red')],
         )
         self.start_btn.place(
             relx=0.3, rely=0.5, anchor="center", relwidth=0.17, relheight=0.1
         )
+        self.start_btn.bind("<Enter>", start_text_to_white)
+        self.start_btn.bind("<Leave>", start_change_text_back)
 
         self.leaderboard_btn = ctk.CTkButton(
             self,
             text="Leaderboard",
             font=("Calibri", 25),
-            fg_color="#ebebeb",
+            fg_color="transparent",
             text_color="green",
-            hover_color="#008000",
             border_color="green",
             border_width=3,
-            command=show_leaderboard
+            command=lambda: [show_leaderboard(), change_select_color(self.leaderboard_btn, 'green')]
         )
         self.leaderboard_btn.place(
             relx=0.7, rely=0.5, anchor="center", relwidth=0.17, relheight=0.1
         )
+        self.leaderboard_btn.bind('<Enter>', leaderboard_text_to_white)
+        self.leaderboard_btn.bind('<Leave>', leaderboard_change_text_back)
 
 
 class Username_window(ctk.CTkToplevel):
@@ -80,7 +116,7 @@ class Username_window(ctk.CTkToplevel):
 
             else:
 
-                Add_Username(self.Username_variable.get())
+                Add_Username(self.Username_variable.get())  # Add username to database
 
                 self.parent_name = self.winfo_parent()
                 self.parent_window = self.nametowidget(self.parent_name)
@@ -88,7 +124,7 @@ class Username_window(ctk.CTkToplevel):
                 Game_Window(self.master)
                 if self.parent_window:
                     self.parent_window.withdraw()
-                    self.withdraw()
+                    self.destroy()
 
         self.geometry("300x185")
         self.title("Enter Username")
