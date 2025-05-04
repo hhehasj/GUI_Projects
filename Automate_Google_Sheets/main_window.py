@@ -17,15 +17,17 @@ class MainWindow(Widgets.QWidget):
                          self.half_of_height,
                          self.windows_width,
                          self.windows_height)
+        self.setMaximumSize(1000, 500)
+        self.setMinimumSize(500, 250)
 
         # LAYOUT
-        self.main_layout = Widgets.QHBoxLayout()
-        self.setLayout(self.main_layout)
+        self.main_layout = Widgets.QHBoxLayout(self)
 
         # Tabs
-        self.tab_widget = Widgets.QTabWidget()
+        self.tab_widget = Widgets.QTabWidget(self)
         self.main_layout.addWidget(self.tab_widget)
         self.tab_widget.addTab(Tab1(), "Frame 1")
+        self.tab_widget.addTab(AttendanceTab(), "Attendance")
         self.tab_widget.addTab(TestimonyTab(), "Testimony")
         self.tab_widget.addTab(DiscussionTab(), "Discussion")
 
@@ -35,33 +37,79 @@ class Tab1(Widgets.QFrame):
         super().__init__()
 
         self.frame_layout = Widgets.QHBoxLayout(self)
-        self.setLayout(self.frame_layout)
 
         self.frame_layout.addWidget(self.Frame1())
         self.frame_layout.addWidget(self.Frame2())
-        self.frame_layout.addWidget(self.Frame3())
 
     class Frame1(Widgets.QFrame):
+
         def __init__(self):
             super().__init__()
 
-            self.frame_layout = Widgets.QVBoxLayout()
-            self.setLayout(self.frame_layout)
+            self.frames_layout = Widgets.QVBoxLayout(self)
+            self.others_frame = Widgets.QGroupBox("Extras")
+            self.others_layout = Widgets.QFormLayout()
+            self.frames_layout.addWidget(self.others_frame)
+            self.others_frame.setLayout(self.others_layout)
+            self.attendance_frame = Widgets.QFrame()
+            self.frames_layout.addWidget(self.attendance_frame)
 
-            # WIDGETS
-            self.lg_leader_lbl = Widgets.QLabel("LG Leader")
+            self.setStyleSheet("""
+                QLabel {
+                    font-family: Comic Sans MS;
+                    font-size: 15px;
+                    font-weight: bold;
+                    letter-spacing: 2px;
+                }
+                
+                QFrame {
+                    border-width: 1px;
+                    border-style: solid;
+                }
+                
+                QGroupBox {
+                   font-weight: bold; 
+                   font-size: 13px;
+                   font-family: Comic Sans MS;
+                }
+                
+                QComboBox {
+                    font-family: Comic Sans MS;
+                    font-size: 18px;
+                    font-weight: bold;
+                    padding-left: 5px;
+                }
+                
+                QLineEdit#offering {
+                    font-family: Comic Sans MS;
+                    font-size: 18px;
+                    font-weight: bold;
+                    padding-left: 5px;
+                }
+                
+                QLineEdit#lesson_title {
+                    font-family: Comic Sans MS;
+                    font-size: 15px;
+                    font-weight: bold;
+                    padding-left: 5px;
+                }
+            """)
+
+            # WIDGETS of self.others_frame
             self.lg_leader = Widgets.QComboBox()
             self.lg_leader.addItems(["Ate Bondz", "Kuya Elisha"])
 
-            self.calendar_lbl = Widgets.QLabel("Date")
-            self.calendar = Widgets.QCalendarWidget()
-            self.setFixedSize(300, 200)
+            self.offering = Widgets.QLineEdit()
+            self.lesson_title = Widgets.QLineEdit()
+            self.offering.setObjectName("offering")
+            self.lesson_title.setObjectName("lesson_title")
 
-            # Adding widgets to the layout
-            self.frame_layout.addWidget(self.lg_leader_lbl)
-            self.frame_layout.addWidget(self.lg_leader)
-            self.frame_layout.addWidget(self.calendar_lbl)
-            self.frame_layout.addWidget(self.calendar)
+            self.others_layout.addRow("LG Leader", self.lg_leader)
+            self.others_layout.addRow("Offering", self.offering)
+            self.others_layout.addRow("Lesson Title", self.lesson_title)
+
+            self.others_layout.setVerticalSpacing(15)
+            self.others_frame.setAlignment(Core.Qt.AlignmentFlag.AlignCenter)
 
     class Frame2(Widgets.QFrame):
         def __init__(self):
@@ -69,50 +117,66 @@ class Tab1(Widgets.QFrame):
 
             self.frame_layout = Widgets.QVBoxLayout()
             self.setLayout(self.frame_layout)
+            self.frame_layout.addLayout(self.Time_Layout())
+            self.frame_layout.addLayout(self.Date_Layout())
 
-            # WIDGETS
-            self.time_started_lbl = Widgets.QLabel("Time Started")
-            self.time_started = Widgets.QTimeEdit()
+        class Time_Layout(Widgets.QHBoxLayout):
+            def __init__(self):
+                super().__init__()
 
-            self.time_ended_lbl = Widgets.QLabel("Time Ended")
-            self.time_ended = Widgets.QTimeEdit()
+                # FONT
+                self.font = Label_Font()
+                self.time_started_layout = Widgets.QVBoxLayout()
+                self.addLayout(self.time_started_layout)
+                self.time_ended_layout = Widgets.QVBoxLayout()
+                self.addLayout(self.time_ended_layout)
 
-            self.offering_lbl = Widgets.QLabel('Offering')
-            self.offering = Widgets.QLineEdit()
+                # WIDGETS
+                self.time_started_lbl = Widgets.QLabel("Time Started")
+                self.time_started_lbl.setFont(self.font)
+                self.time_started_lbl.setAlignment(Core.Qt.AlignmentFlag.AlignCenter)
+                self.time_started_lbl.setFrameShape(Widgets.QFrame.Shape.Box)
+                self.time_started_lbl.setFrameShadow(Widgets.QFrame.Shadow.Plain)
 
-            # Adding widgets to the layout
-            self.frame_layout.addWidget(self.time_started_lbl)
-            self.frame_layout.addWidget(self.time_started)
-            self.frame_layout.addWidget(self.time_ended_lbl)
-            self.frame_layout.addWidget(self.time_ended)
-            self.frame_layout.addWidget(self.offering_lbl)
-            self.frame_layout.addWidget(self.offering)
+                self.time_started = Widgets.QTimeEdit()
 
-    class Frame3(Widgets.QFrame):
-        def __init__(self):
-            super().__init__()
+                self.time_ended_lbl = Widgets.QLabel("Time Ended")
+                self.time_ended_lbl.setFont(self.font)
+                self.time_ended_lbl.setAlignment(Core.Qt.AlignmentFlag.AlignCenter)
+                self.time_ended_lbl.setFrameShape(Widgets.QFrame.Shape.Box)
+                self.time_ended_lbl.setFrameShadow(Widgets.QFrame.Shadow.Plain)
 
-            self.frame_layout = Widgets.QVBoxLayout()
-            self.setLayout(self.frame_layout)
+                self.time_ended = Widgets.QTimeEdit()
 
-            # WIDGETS
-            self.attendance_lbl = Widgets.QLabel("Attendance")
-            self.attendance = Widgets.QComboBox()
-            # self.attendance.addItems()
+                self.time_started_layout.addWidget(self.time_started_lbl)
+                self.time_started_layout.addWidget(self.time_started)
+                self.time_ended_layout.addWidget(self.time_ended_lbl)
+                self.time_ended_layout.addWidget(self.time_ended)
 
-            self.add_person_lbl = Widgets.QLabel("Add Person")
-            self.add_person = Widgets.QLineEdit()
+        class Date_Layout(Widgets.QVBoxLayout):
+            def __init__(self):
+                super().__init__()
 
-            self.remove_person_lbl = Widgets.QLabel("Remove Person")
-            self.remove_person = Widgets.QLineEdit()
+                # FONT
+                self.font = Label_Font()
 
-            # Adding widgets to the layout
-            self.frame_layout.addWidget(self.attendance_lbl)
-            self.frame_layout.addWidget(self.attendance)
-            self.frame_layout.addWidget(self.add_person_lbl)
-            self.frame_layout.addWidget(self.add_person)
-            self.frame_layout.addWidget(self.remove_person_lbl)
-            self.frame_layout.addWidget(self.remove_person)
+                # WIDGETS
+                self.calendar_lbl = Widgets.QLabel("Date")
+                self.calendar_lbl.setFont(self.font)
+                self.calendar_lbl.setAlignment(Core.Qt.AlignmentFlag.AlignCenter)
+
+                self.calendar = Widgets.QCalendarWidget()
+
+                self.addWidget(self.calendar_lbl)
+                self.addWidget(self.calendar)
+
+
+class AttendanceTab(Widgets.QFrame):
+    def __init__(self):
+        super().__init__()
+
+        self.frame_layout = Widgets.QHBoxLayout(self)
+        self.setLayout(self.frame_layout)
 
 
 class TestimonyTab(Widgets.QFrame):
@@ -141,6 +205,17 @@ class DiscussionTab(Widgets.QFrame):
 
         # Adding widgets to the layout
         self.frame_layout.addWidget(self.discussion)
+
+
+class Label_Font(Gui.QFont):
+    def __init__(self):
+        super().__init__()
+
+        self.setFamily("Arial")
+        self.setPointSize(15)
+        self.setWeight(Gui.QFont.Weight.ExtraBold)
+        self.setCapitalization(Gui.QFont.Capitalization.AllUppercase)
+        self.setLetterSpacing(Gui.QFont.SpacingType.PercentageSpacing, 120)
 
 
 app = Widgets.QApplication([])
