@@ -26,7 +26,6 @@ class MainWindow(Widgets.QWidget):
         self.tab_widget = Widgets.QTabWidget(self)
         self.main_layout.addWidget(self.tab_widget)
         self.tab_widget.addTab(Tab1(), "Frame 1")
-        self.tab_widget.addTab(AttendanceTab(), "Attendance")
         self.tab_widget.addTab(TestimonyTab(), "Testimony")
         self.tab_widget.addTab(DiscussionTab(), "Discussion")
 
@@ -54,11 +53,11 @@ class Tab1(Widgets.QFrame):
             self.setStyleSheet("""
                 QLabel {
                     font-family: Comic Sans MS;
-                    font-size: 15px;
+                    font-size: 16px;
                     font-weight: bold;
                     letter-spacing: 2px;
                 }
-                 
+                
                 QComboBox {
                     font-family: Comic Sans MS;
                     font-size: 18px;
@@ -72,7 +71,6 @@ class Tab1(Widgets.QFrame):
                     font-weight: bold;
                     padding-left: 5px;
                 }
-                
             """)
 
         class Extras_GroupBox(Widgets.QGroupBox):
@@ -129,21 +127,41 @@ class Tab1(Widgets.QFrame):
                 self.attendance_layout.setVerticalSpacing(12)
                 self.setAlignment(Core.Qt.AlignmentFlag.AlignCenter)
 
-    class Frame2(Widgets.QFrame):
+    class Frame2(Widgets.QGroupBox):
         def __init__(self):
             super().__init__()
 
-            self.frame_layout = Widgets.QVBoxLayout()
-            self.setLayout(self.frame_layout)
+            self.frame_layout = Widgets.QVBoxLayout(self)
             self.frame_layout.addLayout(self.Time_Layout())
             self.frame_layout.addLayout(self.Date_Layout())
+
+            self.setStyleSheet("""
+                QLabel {
+                    font-family: Comic Sans MS;
+                    font-size: 18px;
+                    font-weight: bold;
+                    letter-spacing: 1px;
+                }
+                
+                QLabel#time_started_lbl {
+                    margin-top: 5px;
+                }
+                
+                QLabel#time_ended_lbl {
+                    margin-top: 5px;
+                }
+                
+                QTimeEdit {
+                    font-family: Comic Sans MS;
+                    font-size: 18px;
+                    font-weight: 200px;
+                }
+            """)
 
         class Time_Layout(Widgets.QHBoxLayout):
             def __init__(self):
                 super().__init__()
 
-                # FONT
-                self.font = Label_Font()
                 self.time_started_layout = Widgets.QVBoxLayout()
                 self.addLayout(self.time_started_layout)
                 self.time_ended_layout = Widgets.QVBoxLayout()
@@ -151,18 +169,14 @@ class Tab1(Widgets.QFrame):
 
                 # WIDGETS
                 self.time_started_lbl = Widgets.QLabel("Time Started")
-                self.time_started_lbl.setFont(self.font)
                 self.time_started_lbl.setAlignment(Core.Qt.AlignmentFlag.AlignCenter)
-                self.time_started_lbl.setFrameShape(Widgets.QFrame.Shape.Box)
-                self.time_started_lbl.setFrameShadow(Widgets.QFrame.Shadow.Plain)
+                self.time_started_lbl.setObjectName("time_started_lbl")
 
                 self.time_started = Widgets.QTimeEdit()
 
                 self.time_ended_lbl = Widgets.QLabel("Time Ended")
-                self.time_ended_lbl.setFont(self.font)
                 self.time_ended_lbl.setAlignment(Core.Qt.AlignmentFlag.AlignCenter)
-                self.time_ended_lbl.setFrameShape(Widgets.QFrame.Shape.Box)
-                self.time_ended_lbl.setFrameShadow(Widgets.QFrame.Shadow.Plain)
+                self.time_ended_lbl.setObjectName(u"time_ended_lbl")
 
                 self.time_ended = Widgets.QTimeEdit()
 
@@ -175,26 +189,16 @@ class Tab1(Widgets.QFrame):
             def __init__(self):
                 super().__init__()
 
-                # FONT
-                self.font = Label_Font()
-
                 # WIDGETS
                 self.calendar_lbl = Widgets.QLabel("Date")
-                self.calendar_lbl.setFont(self.font)
+                self.calendar_lbl.setMaximumSize(150, 250)
                 self.calendar_lbl.setAlignment(Core.Qt.AlignmentFlag.AlignCenter)
 
                 self.calendar = Widgets.QCalendarWidget()
+                self.calendar.setMaximumSize(450, 250)
 
-                self.addWidget(self.calendar_lbl)
+                self.addWidget(self.calendar_lbl, alignment=Core.Qt.AlignmentFlag.AlignHCenter | Core.Qt.AlignmentFlag.AlignBottom)
                 self.addWidget(self.calendar)
-
-
-class AttendanceTab(Widgets.QFrame):
-    def __init__(self):
-        super().__init__()
-
-        self.frame_layout = Widgets.QHBoxLayout(self)
-        self.setLayout(self.frame_layout)
 
 
 class TestimonyTab(Widgets.QFrame):
@@ -223,17 +227,6 @@ class DiscussionTab(Widgets.QFrame):
 
         # Adding widgets to the layout
         self.frame_layout.addWidget(self.discussion)
-
-
-class Label_Font(Gui.QFont):
-    def __init__(self):
-        super().__init__()
-
-        self.setFamily("Arial")
-        self.setPointSize(15)
-        self.setWeight(Gui.QFont.Weight.ExtraBold)
-        self.setCapitalization(Gui.QFont.Capitalization.AllUppercase)
-        self.setLetterSpacing(Gui.QFont.SpacingType.PercentageSpacing, 120)
 
 
 app = Widgets.QApplication([])
