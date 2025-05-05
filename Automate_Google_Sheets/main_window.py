@@ -18,7 +18,6 @@ class MainWindow(Widgets.QWidget):
                          self.windows_width,
                          self.windows_height)
         self.setMaximumSize(1000, 500)
-        self.setMinimumSize(500, 250)
 
         # LAYOUT
         self.main_layout = Widgets.QHBoxLayout(self)
@@ -46,13 +45,11 @@ class Tab1(Widgets.QFrame):
         def __init__(self):
             super().__init__()
 
-            self.frames_layout = Widgets.QVBoxLayout(self)
-            self.others_frame = Widgets.QGroupBox("Extras")
-            self.others_layout = Widgets.QFormLayout()
-            self.frames_layout.addWidget(self.others_frame)
-            self.others_frame.setLayout(self.others_layout)
-            self.attendance_frame = Widgets.QFrame()
-            self.frames_layout.addWidget(self.attendance_frame)
+            # Frames and Layout
+            self.frames_layout = Widgets.QVBoxLayout(self)  # main frame
+            self.frames_layout.setContentsMargins(0, 0, 0, 0)
+            self.frames_layout.addWidget(self.Extras_GroupBox("Extras"))
+            self.frames_layout.addWidget(self.Attendance_GroupBox("Attendance"))
 
             self.setStyleSheet("""
                 QLabel {
@@ -61,18 +58,7 @@ class Tab1(Widgets.QFrame):
                     font-weight: bold;
                     letter-spacing: 2px;
                 }
-                
-                QFrame {
-                    border-width: 1px;
-                    border-style: solid;
-                }
-                
-                QGroupBox {
-                   font-weight: bold; 
-                   font-size: 13px;
-                   font-family: Comic Sans MS;
-                }
-                
+                 
                 QComboBox {
                     font-family: Comic Sans MS;
                     font-size: 18px;
@@ -80,36 +66,68 @@ class Tab1(Widgets.QFrame):
                     padding-left: 5px;
                 }
                 
-                QLineEdit#offering {
+                QLineEdit {
                     font-family: Comic Sans MS;
                     font-size: 18px;
                     font-weight: bold;
                     padding-left: 5px;
                 }
                 
-                QLineEdit#lesson_title {
-                    font-family: Comic Sans MS;
-                    font-size: 15px;
-                    font-weight: bold;
-                    padding-left: 5px;
-                }
             """)
 
-            # WIDGETS of self.others_frame
-            self.lg_leader = Widgets.QComboBox()
-            self.lg_leader.addItems(["Ate Bondz", "Kuya Elisha"])
+        class Extras_GroupBox(Widgets.QGroupBox):
+            def __init__(self, title: str):
+                super().__init__(title=title)
 
-            self.offering = Widgets.QLineEdit()
-            self.lesson_title = Widgets.QLineEdit()
-            self.offering.setObjectName("offering")
-            self.lesson_title.setObjectName("lesson_title")
+                self.setStyleSheet("""
+                QLineEdit#lesson_title {
+                    font-size: 15px;
+                }
+                """)
 
-            self.others_layout.addRow("LG Leader", self.lg_leader)
-            self.others_layout.addRow("Offering", self.offering)
-            self.others_layout.addRow("Lesson Title", self.lesson_title)
+                self.extras_layout = Widgets.QFormLayout(self)
+                self.setMaximumSize(640, 150)
 
-            self.others_layout.setVerticalSpacing(15)
-            self.others_frame.setAlignment(Core.Qt.AlignmentFlag.AlignCenter)
+                self.lg_leader = Widgets.QComboBox()
+                self.lg_leader.addItems(["Ate Bondz", "Kuya Elisha"])
+
+                self.offering = Widgets.QLineEdit()
+                self.lesson_title = Widgets.QLineEdit()
+                self.offering.setObjectName("offering")
+                self.lesson_title.setObjectName("lesson_title")
+
+                self.extras_layout.addRow("LG Leader:", self.lg_leader)
+                self.extras_layout.addRow("Offering:", self.offering)
+                self.extras_layout.addRow("Lesson Title:", self.lesson_title)
+
+                self.extras_layout.setVerticalSpacing(12)
+                self.setAlignment(Core.Qt.AlignmentFlag.AlignCenter)
+
+        class Attendance_GroupBox(Widgets.QGroupBox):
+            def __init__(self, title: str):
+                super().__init__(title=title)
+
+                self.attendance_layout = Widgets.QFormLayout(self)
+                self.setMaximumSize(640, 180)
+
+                self.members = Widgets.QComboBox()
+                self.members.addItems(["Alfred, Julienne, Aaron"])
+                self.members.setObjectName('members')
+
+                self.remove_person = Widgets.QLineEdit()
+                self.members.setObjectName('remove_person')
+                self.add_person = Widgets.QLineEdit()
+                self.members.setObjectName('add_person')
+
+                self.save_box = Widgets.QCheckBox("")
+
+                self.attendance_layout.addRow('Members:', self.members)
+                self.attendance_layout.addRow('Add Person:', self.remove_person)
+                self.attendance_layout.addRow('Remove Person:', self.add_person)
+                self.attendance_layout.addRow("Save:", self.save_box)
+
+                self.attendance_layout.setVerticalSpacing(12)
+                self.setAlignment(Core.Qt.AlignmentFlag.AlignCenter)
 
     class Frame2(Widgets.QFrame):
         def __init__(self):
