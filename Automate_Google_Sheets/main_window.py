@@ -28,6 +28,7 @@ class MainWindow(Widgets.QWidget):
         self.tab_widget.addTab(Tab1(), "Frame 1")
         self.tab_widget.addTab(TestimonyTab(), "Testimony")
         self.tab_widget.addTab(DiscussionTab(), "Discussion")
+        self.tab_widget.addTab(FinishTab(), "Finish")
 
 
 class Tab1(Widgets.QFrame):
@@ -54,7 +55,7 @@ class Tab1(Widgets.QFrame):
                 QLabel {
                     font-family: Comic Sans MS;
                     font-size: 16px;
-                    font-weight: bold;
+                    font-weight: normal;
                     letter-spacing: 2px;
                 }
                 
@@ -63,6 +64,7 @@ class Tab1(Widgets.QFrame):
                     font-size: 18px;
                     font-weight: bold;
                     padding-left: 5px;
+                    
                 }
                 
                 QLineEdit {
@@ -77,14 +79,7 @@ class Tab1(Widgets.QFrame):
             def __init__(self, title: str):
                 super().__init__(title=title)
 
-                self.setStyleSheet("""
-                QLineEdit#lesson_title {
-                    font-size: 15px;
-                }
-                """)
-
                 self.extras_layout = Widgets.QFormLayout(self)
-                self.setMaximumSize(640, 150)
 
                 self.lg_leader = Widgets.QComboBox()
                 self.lg_leader.addItems(["Ate Bondz", "Kuya Elisha"])
@@ -106,7 +101,6 @@ class Tab1(Widgets.QFrame):
                 super().__init__(title=title)
 
                 self.attendance_layout = Widgets.QFormLayout(self)
-                self.setMaximumSize(640, 180)
 
                 self.members = Widgets.QComboBox()
                 self.members.addItems(["Alfred, Julienne, Aaron"])
@@ -151,10 +145,18 @@ class Tab1(Widgets.QFrame):
                     margin-top: 5px;
                 }
                 
+                QLabel#calendar_lbl {
+                    margin-top: 8px;
+                }
+                
                 QTimeEdit {
                     font-family: Comic Sans MS;
                     font-size: 18px;
                     font-weight: 200px;
+                }
+                
+                QGroupBox {
+                    margin-top: 8px;
                 }
             """)
 
@@ -191,11 +193,12 @@ class Tab1(Widgets.QFrame):
 
                 # WIDGETS
                 self.calendar_lbl = Widgets.QLabel("Date")
+                self.calendar_lbl.setObjectName("calendar_lbl")
                 self.calendar_lbl.setMaximumSize(150, 250)
                 self.calendar_lbl.setAlignment(Core.Qt.AlignmentFlag.AlignCenter)
 
                 self.calendar = Widgets.QCalendarWidget()
-                self.calendar.setMaximumSize(450, 250)
+                self.calendar.setMaximumSize(450, 300)
 
                 self.addWidget(self.calendar_lbl, alignment=Core.Qt.AlignmentFlag.AlignHCenter | Core.Qt.AlignmentFlag.AlignBottom)
                 self.addWidget(self.calendar)
@@ -205,13 +208,33 @@ class TestimonyTab(Widgets.QFrame):
     def __init__(self):
         super().__init__()
 
-        self.frame_layout = Widgets.QHBoxLayout(self)
-        self.setLayout(self.frame_layout)
+        self.frame_layout = Widgets.QVBoxLayout(self)
+        self.setStyleSheet("""
+            QFrame {
+                margin: 0px 3px;
+            }
+            
+            QLabel {
+                font-family: Comic Sans MS;
+                font-size: 25px;
+                font-weight: bold;
+            }
+            
+            QPlainTextEdit {
+                font-family: Comic Sans MS;
+                font-size: 15px;
+                padding: 4px 5px;
+                border: 2px solid black;
+                border-radius: 10;
+            }
+        """)
 
         # WIDGETS
-        self.testimony = Widgets.QLineEdit()
+        self.testimony_lbl = Widgets.QLabel("TESTIMONIES:")
+        self.testimony = Widgets.QPlainTextEdit()
 
         # Adding widgets to the layout
+        self.frame_layout.addWidget(self.testimony_lbl)
         self.frame_layout.addWidget(self.testimony)
 
 
@@ -219,14 +242,64 @@ class DiscussionTab(Widgets.QFrame):
     def __init__(self):
         super().__init__()
 
-        self.frame_layout = Widgets.QHBoxLayout(self)
-        self.setLayout(self.frame_layout)
+        self.frame_layout = Widgets.QVBoxLayout(self)
+        self.setStyleSheet("""
+            QFrame {
+                margin: 0px 3px;
+            }
+            
+            QLabel {
+                font-family: Comic Sans MS;
+                font-size: 25px;
+                font-weight: bold;
+            }
+            
+            QPlainTextEdit {
+                font-family: Comic Sans MS;
+                font-size: 15px;
+                padding: 4px 5px;
+                border: 2px solid black;
+                border-radius: 10;
+            }
+        """)
 
         # WIDGETS
-        self.discussion = Widgets.QLineEdit()
+        self.discussion_lbl = Widgets.QLabel("DISCUSSION:")
+        self.discussion = Widgets.QPlainTextEdit()
 
         # Adding widgets to the layout
+        self.frame_layout.addWidget(self.discussion_lbl)
         self.frame_layout.addWidget(self.discussion)
+
+
+class FinishTab(Widgets.QFrame):
+    def __init__(self):
+        super().__init__()
+
+        self.frame_layout = Widgets.QHBoxLayout(self)
+        self.setStyleSheet("""
+        QPushButton#finish_btn {
+            font-family: Comic Sans MS;
+            font-size: 35px;
+            border: 3px solid black;
+            border-radius: 15px;
+            padding: 5px 10px;
+        }
+        QPushButton#finish_btn:hover {
+            background-color: #f4f4f4;    
+        }
+        
+        QPushButton#finish_btn:pressed {
+            background-color: #c7c7c7;
+        }
+        
+        """)
+
+        # WIDGETS
+        self.finish_btn = Widgets.QPushButton("FINISH", self)
+        self.finish_btn.setObjectName("finish_btn")
+
+        self.frame_layout.addWidget(self.finish_btn, alignment=Core.Qt.AlignmentFlag.AlignCenter)
 
 
 app = Widgets.QApplication([])
