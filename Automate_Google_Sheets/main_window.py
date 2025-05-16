@@ -1,7 +1,6 @@
-import sys
 import PySide6.QtWidgets as Widgets
 import PySide6.QtCore as Core
-import PySide6.QtGui as Gui
+from database import get_members
 
 Data = {
     "LG Leader": "",
@@ -50,8 +49,8 @@ def return_ComboBox_selection(widget, selection):
     if widget.objectName() == "lg_leader":
         Data["LG Leader"] = selection
 
-    if widget.objectName() == "members":
-        Data["Members"] = selection
+    # if widget.objectName() == "members":
+    #     Data["Members"] = selection
 
 
 def return_LineEdit(widget, text):
@@ -198,18 +197,19 @@ class Tab1(Widgets.QFrame):
                 absent_people: list[str] = self.remove_person.text().split(", ")
                 visitors: list[str] = self.add_person.text().split(", ")
                 selected: str = self.members.currentText()
-                members: set[str] = {
-                    "Alfred",
-                    "Julienne",
-                    "Aaron",
-                    "Jhanna",
-                    "Rainelle",
-                    "EJ",
-                    "Cristof",
-                    "Izabelle",
-                    "Glory Lyn",
-                    "Elisha"
-                }
+                # members: set[str] = {
+                #     "Alfred",
+                #     "Julienne",
+                #     "Aaron",
+                #     "Jhanna",
+                #     "Rainelle",
+                #     "EJ",
+                #     "Cristof",
+                #     "Izabelle",
+                #     "Glory Lyn",
+                #     "Elisha"
+                # }
+                members: set[str] = get_members()
                 if selected != "":
                     Data["Members"] = members
 
@@ -227,9 +227,6 @@ class Tab1(Widgets.QFrame):
                             print(f"{absent} was not found.")
 
                         Data["Members"] = members
-
-
-                print(Data["Members"])
 
     class Frame2(Widgets.QGroupBox):
         def __init__(self):
@@ -442,9 +439,14 @@ class FinishTab(Widgets.QFrame):
         # WIDGETS
         self.finish_btn = Widgets.QPushButton("FINISH", self)
         self.finish_btn.setObjectName("finish_btn")
-        self.finish_btn.clicked.connect(lambda: print(Data, end=""))
+        self.finish_btn.clicked.connect(self.print_all_data)
 
         self.frame_layout.addWidget(self.finish_btn, alignment=Core.Qt.AlignmentFlag.AlignCenter)
+
+    def print_all_data(self):
+        for key, value in Data.items():
+            print(f"{key}: {value}")
+
 
 
 app = Widgets.QApplication([])
