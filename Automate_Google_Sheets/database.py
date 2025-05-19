@@ -7,7 +7,7 @@ def get_members():
             members: set[str] = set()
             cursor = conn.cursor()
 
-            db_output: list[tuple[str, str]] = cursor.execute("SELECT name FROM members;").fetchall()
+            db_output: list[tuple[str, int]] = cursor.execute("SELECT name FROM members;").fetchall()
 
             for row in db_output:
                 for name in row:

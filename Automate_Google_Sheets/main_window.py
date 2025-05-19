@@ -1,17 +1,18 @@
 import PySide6.QtWidgets as Widgets
 import PySide6.QtCore as Core
 from database import get_members
+from modify_worksheets import main
 
 Data = {
     "LG Leader": "",
     "Offering": 0,
     "Lesson Title": "",
-    "Members": {""},
-    "Save": False,
+    # "Attendance": {""},
+    "Attendance": "",
     "Time Started": "",
     "Time Ended": "",
     "Date": "",
-    "Testimony": "",
+    "Testimonies": "",
     "Discussion": ""
 }
 
@@ -197,26 +198,15 @@ class Tab1(Widgets.QFrame):
                 absent_people: list[str] = self.remove_person.text().split(", ")
                 visitors: list[str] = self.add_person.text().split(", ")
                 selected: str = self.members.currentText()
-                # members: set[str] = {
-                #     "Alfred",
-                #     "Julienne",
-                #     "Aaron",
-                #     "Jhanna",
-                #     "Rainelle",
-                #     "EJ",
-                #     "Cristof",
-                #     "Izabelle",
-                #     "Glory Lyn",
-                #     "Elisha"
-                # }
-                members: set[str] = get_members()
+                members: set[str] = get_members()  # Retrieves the names from the g_sheet.db
+
                 if selected != "":
-                    Data["Members"] = members
+                    Data["Attendance"] = ", ".join(members)
 
                 if visitors != "":
                     for visitor in visitors:
                         members.add(visitor)
-                    Data["Members"] = members
+                    Data["Attendance"] = ", ".join(members)
 
                 if absent_people != "":
                     for absent in absent_people:
@@ -226,7 +216,7 @@ class Tab1(Widgets.QFrame):
                         else:
                             print(f"{absent} was not found.")
 
-                        Data["Members"] = members
+                        Data["Attendance"] = ", ".join(members)
 
     class Frame2(Widgets.QGroupBox):
         def __init__(self):
@@ -447,6 +437,7 @@ class FinishTab(Widgets.QFrame):
         for key, value in Data.items():
             print(f"{key}: {value}")
 
+        main(data=Data)
 
 
 app = Widgets.QApplication([])
