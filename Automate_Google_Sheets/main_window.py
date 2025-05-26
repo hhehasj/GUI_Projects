@@ -7,7 +7,6 @@ Data = {
     "LG Leader": "",
     "Offering": 0,
     "Lesson Title": "",
-    # "Attendance": {""},
     "Attendance": "",
     "Time Started": "",
     "Time Ended": "",
@@ -434,10 +433,10 @@ class FinishTab(Widgets.QFrame):
         self.frame_layout.addWidget(self.finish_btn, alignment=Core.Qt.AlignmentFlag.AlignCenter)
 
     def print_all_data(self):
+        main(data=Data)
+
         for key, value in Data.items():
             print(f"{key}: {value}")
-
-        main(data=Data)
 
 
 app = Widgets.QApplication([])
