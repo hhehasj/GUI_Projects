@@ -5,14 +5,14 @@ from modify_worksheets import main
 
 Data = {
     "LG Leader": "",
+    "Date": "",
     "Offering": 0,
-    "Lesson Title": "",
     "Attendance": "",
+    "Lesson Title": "",
+    "Testimonies": "",
+    "Discussion": "",
     "Time Started": "",
     "Time Ended": "",
-    "Date": "",
-    "Testimonies": "",
-    "Discussion": ""
 }
 
 
@@ -88,8 +88,8 @@ def return_CheckBox(state):
 def return_PlainTextEdit(widget, content):
     global Data
 
-    if widget.objectName() == "testimony":
-        Data["Testimony"] = content
+    if widget.objectName() == "testimonies":
+        Data["Testimonies"] = content
 
     if widget.objectName() == "discussion":
         Data["Discussion"] = content
@@ -304,7 +304,6 @@ class Tab1(Widgets.QFrame):
 
                     def return_clicked_date(self):
                         Data["Date"] = self.selectedDate().toString("MMMM dd, yyyy")
-                        print(Data["Date"])
 
                     def keyPressEvent(self, event):  # Making our own keyPressEvent
                         super().keyPressEvent(event)  # Inherit from QCalendarWidget's keyPressEvent method
@@ -358,7 +357,7 @@ class TestimonyTab(Widgets.QFrame):
         # WIDGETS
         self.testimony_lbl = Widgets.QLabel("TESTIMONIES:")
         self.testimony = Widgets.QPlainTextEdit()
-        self.testimony.setObjectName("testimony")
+        self.testimony.setObjectName("testimonies")
         self.testimony.textChanged.connect(lambda: return_PlainTextEdit(widget=self.testimony, content=self.testimony.toPlainText()))
 
         # Adding widgets to the layout
@@ -428,15 +427,12 @@ class FinishTab(Widgets.QFrame):
         # WIDGETS
         self.finish_btn = Widgets.QPushButton("FINISH", self)
         self.finish_btn.setObjectName("finish_btn")
-        self.finish_btn.clicked.connect(self.print_all_data)
+        self.finish_btn.clicked.connect(self.send_data)
 
         self.frame_layout.addWidget(self.finish_btn, alignment=Core.Qt.AlignmentFlag.AlignCenter)
 
-    def print_all_data(self):
+    def send_data(self):
         main(data=Data)
-
-        for key, value in Data.items():
-            print(f"{key}: {value}")
 
 
 app = Widgets.QApplication([])
