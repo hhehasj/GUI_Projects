@@ -1,6 +1,6 @@
 import PySide6.QtWidgets as Widgets
 import PySide6.QtCore as Core
-from database import get_members
+from attendance_tab import AttendanceTab
 from modify_worksheets import main
 
 Data = {
@@ -37,7 +37,9 @@ class MainWindow(Widgets.QWidget):
         # Tabs
         self.tab_widget = Widgets.QTabWidget(self)
         self.main_layout.addWidget(self.tab_widget)
-        self.tab_widget.addTab(Tab1(), "Frame 1")
+
+        self.tab_widget.addTab(Tab1(), "Other Details")
+        self.tab_widget.addTab(AttendanceTab(), "Attendance")
         self.tab_widget.addTab(TestimonyTab(), "Testimony")
         self.tab_widget.addTab(DiscussionTab(), "Discussion")
         self.tab_widget.addTab(FinishTab(), "Finish")
@@ -48,9 +50,6 @@ def return_ComboBox_selection(widget, selection):
 
     if widget.objectName() == "lg_leader":
         Data["LG Leader"] = selection
-
-    # if widget.objectName() == "members":
-    #     Data["Members"] = selection
 
 
 def return_LineEdit(widget, text):
@@ -80,11 +79,6 @@ def return_TimeEdit(widget, time):
         Data["Time Ended"] = time
 
 
-def return_CheckBox(state):
-    Data['Save'] = state
-    print(Data['Save'])
-
-
 def return_PlainTextEdit(widget, content):
     global Data
 
@@ -93,6 +87,11 @@ def return_PlainTextEdit(widget, content):
 
     if widget.objectName() == "discussion":
         Data["Discussion"] = content
+
+
+def x():
+    Data["Attendance"] = ", ".join(AttendanceTab.member_list)
+    print(", ".join(AttendanceTab.member_list))
 
 
 class Tab1(Widgets.QFrame):
@@ -113,7 +112,6 @@ class Tab1(Widgets.QFrame):
             self.frames_layout = Widgets.QVBoxLayout(self)  # main frame
             self.frames_layout.setContentsMargins(0, 0, 0, 0)
             self.frames_layout.addWidget(self.Extras_GroupBox("Extras"))
-            self.frames_layout.addWidget(self.Attendance_GroupBox("Attendance"))
 
             self.setStyleSheet("""
                 QLabel {
@@ -148,74 +146,24 @@ class Tab1(Widgets.QFrame):
                 self.lg_leader = Widgets.QComboBox()
                 self.lg_leader.setObjectName("lg_leader")
                 self.lg_leader.addItems(["", "Ate Bondz", "Kuya Elisha"])
-                self.lg_leader.textActivated.connect(lambda: return_ComboBox_selection(widget=self.lg_leader, selection=self.lg_leader.currentText()))
+                self.lg_leader.textActivated.connect(
+                    lambda: return_ComboBox_selection(widget=self.lg_leader, selection=self.lg_leader.currentText()))
 
                 self.offering = Widgets.QLineEdit()
                 self.offering.setObjectName("offering")
-                self.offering.editingFinished.connect(lambda: return_LineEdit(widget=self.offering, text=self.offering.text()))
+                self.offering.editingFinished.connect(
+                    lambda: return_LineEdit(widget=self.offering, text=self.offering.text()))
 
                 self.lesson_title = Widgets.QLineEdit()
                 self.lesson_title.setObjectName("lesson_title")
-                self.lesson_title.editingFinished.connect(lambda: return_LineEdit(widget=self.lesson_title, text=self.lesson_title.text()))
+                self.lesson_title.editingFinished.connect(
+                    lambda: return_LineEdit(widget=self.lesson_title, text=self.lesson_title.text()))
 
                 self.extras_layout.addRow("LG Leader:", self.lg_leader)
                 self.extras_layout.addRow("Offering:", self.offering)
                 self.extras_layout.addRow("Lesson Title:", self.lesson_title)
 
                 self.extras_layout.setVerticalSpacing(12)
-
-        class Attendance_GroupBox(Widgets.QGroupBox):
-            def __init__(self, title: str):
-                super().__init__(title=title)
-
-                self.attendance_layout = Widgets.QFormLayout(self)
-
-                self.members = Widgets.QComboBox()
-                self.members.setObjectName('members')
-                self.members.addItems(["", "Everyone"])
-                self.members.currentTextChanged.connect(self.absent_visitors_inlucuded)
-
-                self.remove_person = Widgets.QLineEdit()
-                self.remove_person.setObjectName('remove_person')
-                self.remove_person.editingFinished.connect(self.absent_visitors_inlucuded)
-
-                self.add_person = Widgets.QLineEdit()
-                self.add_person.setObjectName('add_person')
-                self.add_person.editingFinished.connect(self.absent_visitors_inlucuded)
-
-                self.save_box = Widgets.QCheckBox("")
-                self.save_box.checkStateChanged.connect(lambda: return_CheckBox(self.save_box.checkState()))
-
-                self.attendance_layout.addRow('Members:', self.members)
-                self.attendance_layout.addRow('Remove Person:', self.remove_person)
-                self.attendance_layout.addRow('Add Person:', self.add_person)
-                self.attendance_layout.addRow("Save:", self.save_box)
-
-                self.attendance_layout.setVerticalSpacing(12)
-
-            def absent_visitors_inlucuded(self):
-                absent_people: list[str] = self.remove_person.text().split(", ")
-                visitors: list[str] = self.add_person.text().split(", ")
-                selected: str = self.members.currentText()
-                members: set[str] = get_members()  # Retrieves the names from the g_sheet.db
-
-                if selected != "":
-                    Data["Attendance"] = ", ".join(members)
-
-                if visitors != "":
-                    for visitor in visitors:
-                        members.add(visitor)
-                    Data["Attendance"] = ", ".join(members)
-
-                if absent_people != "":
-                    for absent in absent_people:
-
-                        if absent in members:
-                            members.remove(absent)
-                        else:
-                            print(f"{absent} was not found.")
-
-                        Data["Attendance"] = ", ".join(members)
 
     class Frame2(Widgets.QGroupBox):
         def __init__(self):
@@ -274,7 +222,8 @@ class Tab1(Widgets.QFrame):
                 self.time_started.setObjectName("time_started")
                 self.time_started.setMaximumTime(Core.QTime(23, 0, 0))
                 self.time_started.setMinimumTime(Core.QTime(18, 0, 0))
-                self.time_started.userTimeChanged.connect(lambda: return_TimeEdit(widget=self.time_started, time=self.time_started.text()))
+                self.time_started.userTimeChanged.connect(
+                    lambda: return_TimeEdit(widget=self.time_started, time=self.time_started.text()))
 
                 self.time_ended_lbl = Widgets.QLabel("Time Ended")
                 self.time_ended_lbl.setObjectName("time_ended_lbl")
@@ -284,7 +233,8 @@ class Tab1(Widgets.QFrame):
                 self.time_ended.setObjectName("time_ended")
                 self.time_ended.setMaximumTime(Core.QTime(23, 0, 0))
                 self.time_ended.setMinimumTime(Core.QTime(18, 0, 0))
-                self.time_ended.userTimeChanged.connect(lambda: return_TimeEdit(widget=self.time_ended, time=self.time_ended.text()))
+                self.time_ended.userTimeChanged.connect(
+                    lambda: return_TimeEdit(widget=self.time_ended, time=self.time_ended.text()))
 
                 self.time_started_layout.addWidget(self.time_started_lbl)
                 self.time_started_layout.addWidget(self.time_started)
@@ -325,7 +275,8 @@ class Tab1(Widgets.QFrame):
 
                 self.calendar = CalendarWithKeyDisplay()
 
-                self.addWidget(self.calendar_lbl, alignment=Core.Qt.AlignmentFlag.AlignHCenter | Core.Qt.AlignmentFlag.AlignBottom)
+                self.addWidget(self.calendar_lbl,
+                               alignment=Core.Qt.AlignmentFlag.AlignHCenter | Core.Qt.AlignmentFlag.AlignBottom)
                 self.addWidget(self.calendar)
 
 
@@ -358,7 +309,8 @@ class TestimonyTab(Widgets.QFrame):
         self.testimony_lbl = Widgets.QLabel("TESTIMONIES:")
         self.testimony = Widgets.QPlainTextEdit()
         self.testimony.setObjectName("testimonies")
-        self.testimony.textChanged.connect(lambda: return_PlainTextEdit(widget=self.testimony, content=self.testimony.toPlainText()))
+        self.testimony.textChanged.connect(
+            lambda: return_PlainTextEdit(widget=self.testimony, content=self.testimony.toPlainText()))
 
         # Adding widgets to the layout
         self.frame_layout.addWidget(self.testimony_lbl)
@@ -394,7 +346,8 @@ class DiscussionTab(Widgets.QFrame):
         self.discussion_lbl = Widgets.QLabel("DISCUSSION:")
         self.discussion = Widgets.QPlainTextEdit()
         self.discussion.setObjectName("discussion")
-        self.discussion.textChanged.connect(lambda: return_PlainTextEdit(widget=self.discussion, content=self.discussion.toPlainText()))
+        self.discussion.textChanged.connect(
+            lambda: return_PlainTextEdit(widget=self.discussion, content=self.discussion.toPlainText()))
 
         # Adding widgets to the layout
         self.frame_layout.addWidget(self.discussion_lbl)
@@ -432,6 +385,7 @@ class FinishTab(Widgets.QFrame):
         self.frame_layout.addWidget(self.finish_btn, alignment=Core.Qt.AlignmentFlag.AlignCenter)
 
     def send_data(self):
+        x()
         main(data=Data)
 
 
