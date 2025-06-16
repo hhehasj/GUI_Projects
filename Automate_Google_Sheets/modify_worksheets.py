@@ -12,7 +12,7 @@ google_sheet = client.open_by_key(google_sheet_id)
 
 
 def which_sheet(date: str):
-    quarters_months_pairs: dict[int: list[str]] = {
+    quarters_month: dict[int: list[str]] = {
         1: ["January", "February", "March"],
         2: ["April", "May", "June"],
         3: ["July", "August", "September"],
@@ -20,9 +20,9 @@ def which_sheet(date: str):
     }
     month = date.split(" ", maxsplit=2)[0]  # Gets only the month name
 
-    for key, quarters in quarters_months_pairs.items():
+    for id_of_sheet, quarters in quarters_month.items():
         if month in quarters:
-            return google_sheet.get_worksheet(key)  # returns the sheet that the data gets edited in
+            return google_sheet.get_worksheet(id_of_sheet)
 
 
 def main(data: dict[str: str, str: int]):
@@ -47,14 +47,14 @@ def main(data: dict[str: str, str: int]):
                 col_id += 2
                 row_id = starting_row
 
-            if next_value is not None:  # rows after the most top-left corner always returns None
+            if next_value is not None:  # if the next row's value has something
                 break
 
     pattern = re.compile(r"^LG Leader:\s*$")
     while sheet.find(pattern) and not_finish_editing:
         row_id = sheet.find(pattern).row
         col_id = sheet.find(pattern).col
-        starting_row = sheet.find(pattern).row
+        starting_row = row_id
 
         for label, value in data.items():
             if sheet.cell(row_id, col_id).value == "Lessons Learned/Feedbacks:":
@@ -67,7 +67,7 @@ def main(data: dict[str: str, str: int]):
                 sheet.update_cell(row_id, col_id, value)
                 row_id += 1
 
-                if row_id == starting_row + 1:
+                if row_id == (starting_row + 1):
                     not_finish_editing = False
 
             else:
