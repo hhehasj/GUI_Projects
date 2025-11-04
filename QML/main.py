@@ -97,7 +97,7 @@ class Backend(QObject):
         blank_lbl = root.findChild(QObject, "blank_lbl")
         tries_lbl = root.findChild(QObject, "tries_lbl")
 
-        if ( self.tries_left == 0 and answer != self.chosen_word ):
+        if ( self.tries_left == 0 and len(answer) == 1 and answer != self.chosen_word ):
             self.error_popup.emit(True, "You ran out of tries")
 
         else :
