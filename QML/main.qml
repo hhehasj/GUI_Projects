@@ -7,10 +7,9 @@ ApplicationWindow {
     id: root
     visible: true
     width: Screen.width * 0.6
-    height: Screen.height * 0.75
-    x: (Screen.width - width) / 2
-    y: (Screen.height - height) / 2
-    title: "PySide6 + QML"
+    height: Screen.height * 0.70
+    // x: (Screen.width - width) / 2 y: (Screen.height - height) / 2
+    // title: "PySide6 + QML"
 
     // -----------------------
     // Start Button
