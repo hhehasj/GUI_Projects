@@ -16,15 +16,14 @@ class Backend(QObject):
 
 
     @Slot()
-    def clear_buttons(self):
+    def show_content(self):
 
         root = self.engine.rootObjects()[0]
-        start_button: QObject = root.findChild(QObject, "start_button") # uses the objectName: "start_button" from test.qml
+        # start_button: QObject = root.findChild(QObject, "start_button") # uses the objectName: "start_button" from test.qml
         tries_lbl: QObject = root.findChild(QObject, "tries_lbl") # uses the objectName: "tries_lbl" from test.qml
-        self.chosen_word: str = random.choice(self.words_to_guess)
 
-        start_button.setParent(None) 
-        start_button.deleteLater() 
+        # start_button.setParent(None) 
+        # start_button.deleteLater() 
 
         tries_lbl.setProperty("visible", True)
         column: QObject = root.findChild(QObject, "contentColumn")
@@ -35,6 +34,7 @@ class Backend(QObject):
     def create_blanks(self):
         root = self.engine.rootObjects()[0]
         blank_lbl: QObject = root.findChild(QObject, "blank_lbl")
+        self.chosen_word: str = random.choice(self.words_to_guess)
 
         # creating the blanks to be displayed
 

@@ -20,6 +20,10 @@ ApplicationWindow {
         objectName: "start_button"
         anchors.centerIn: parent
 
+        // Animation
+        property real start_x: x
+        property real start_y: y
+
         background: Rectangle {
             implicitWidth: 250
             implicitHeight: 150
@@ -29,10 +33,6 @@ ApplicationWindow {
             border.color: "#0059FF"
             border.width: 4
             radius: 10
-
-            Behavior on color {
-                ColorAnimation { duration: 500; easing.type: Easing.InOutQuad }
-            }
         }
 
         contentItem: Item {
@@ -47,8 +47,26 @@ ApplicationWindow {
             }
         }
 
+        NumberAnimation on x { 
+            id: move_animation 
+            duration: 300 
+            running: false
+            onFinished: {
+                backend.show_content()
+                start_button.destroy()
+            }
+        }
+
+
         onClicked: {
-            backend.clear_buttons()
+            start_button.anchors.centerIn = undefined
+
+            move_animation.from= start_x // Setting the current position
+            move_animation.to= -start_button.width - 100 // Animating button to go to the left
+            move_animation.start()
+
+
+            // backend.show_content()
             backend.create_blanks()
             backend.generate_tries()
 
@@ -67,8 +85,21 @@ ApplicationWindow {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.bottomMargin: 20
         visible: false
+        opacity: 0
+
+        Behavior on opacity {
+            NumberAnimation { duration: 300 }
+        }
+
+        Behavior on rotation {
+            NumberAnimation {
+                duration: 800
+                easing.type: Easing.OutBack
+            }
+        }
 
     }
+
 
     Column {
         id: contentColumn
@@ -138,9 +169,6 @@ ApplicationWindow {
                     border.width: 4
                     radius: 10
 
-                    Behavior on color {
-                        ColorAnimation { duration: 500; easing.type: Easing.InOutQuad }
-                    }
                 }
 
                 contentItem: Image {
@@ -197,8 +225,8 @@ ApplicationWindow {
         interval: 3000
         onTriggered: { 
             status_img.visible = false 
+            status_img.rotation = 0
             messages_lbl.visible = false 
-
         }
     }
     // to receive Signal(stuff)
@@ -207,14 +235,20 @@ ApplicationWindow {
 
         function onRight_or_wrong(bool, chosen_word) {
             status_img.visible = true
+            status_img.opacity = 1
+            // status_img.rotation = 0
 
             if ( bool ) {
                 status_img.source = "./check.png" 
                 blank_lbl.text = chosen_word
                 enter_btn.enabled = false
 
+                status_img.rotation = 360
+
             } else {
                 status_img.source = "./wrong.png" 
+                // status_img.rotation = 0
+                status_img.rotation = 360
 
             }
 
